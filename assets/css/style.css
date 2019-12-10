@@ -4,6 +4,16 @@ header {
     font-size: 34px;
 }
 
+.round-left {
+    border-top-left-radius: 1rem;
+    border-bottom-left-radius: 1rem;
+}
+
+.round-right {
+    border-top-right-radius: 1rem;
+    border-bottom-right-radius: 1rem;
+}
+
 .no-resize {
     resize: none;
 }
