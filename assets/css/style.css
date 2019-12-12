@@ -1,3 +1,7 @@
+body {
+    background-color: #283338;
+}
+
 header {
     height: 80px;
     line-height: 80px;
@@ -30,6 +34,26 @@ header {
 
 .text-entry {
     font-size: 24px;
+}
+
+.bg-smoke {
+    background-color: #55584f;
+}
+
+.bg-cardinal {
+    background-color: #af3931;
+}
+
+.bg-past {
+    background-color: #a39c84;
+}
+
+.bg-present {
+    background-color: #af3931;
+}
+
+.bg-future {
+    background-color: #ece7d4;
 }
 
 .action-button {

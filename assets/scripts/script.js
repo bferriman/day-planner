@@ -5,7 +5,7 @@ var dateEl = $("#date");
 var containerDiv = $("#main");
 var timeRowArr = [];
 
-var hourStrings = ["9:00", "10:00", "11:00", "12:00", "1:00", "2:00", "3:00", "4:00", "5:00"];
+var hourStrings = ["9", "10", "11", "12", "13", "14", "15", "16", "17"];
 
 
 
@@ -27,6 +27,7 @@ function loadTime() {
 
     var timeRefresh = setInterval(function() {  //start timer
         displayTime(x);
+        colorRows();
     }, 1000);
 }
 
@@ -38,8 +39,8 @@ function buildSkeleton() {
         timeRow.attr("class", "row time-row my-2");
 
         var hourDiv = $("<div>");
-        hourDiv.attr("class", "col-2 text-center time-label bg-primary round-left px-0");
-        hourDiv.text(hourStrings[i]);
+        hourDiv.attr("class", "col-2 text-center time-label text-white bg-smoke round-left px-0");
+        hourDiv.text(((hourStrings[i] - 1) % 12 + 1)+ ":00");
         timeRow.append(hourDiv);
 
         var textDiv = $("<div>");
@@ -52,7 +53,7 @@ function buildSkeleton() {
         timeRow.append(textDiv);
 
         var buttonsColDiv = $("<div>");
-        buttonsColDiv.attr("class", "col-2 bg-info round-right")
+        buttonsColDiv.attr("class", "col-2 bg-smoke round-right")
         var buttonsRowDiv = $("<div>");
         buttonsRowDiv.attr("class", "row buttons-row");
 
@@ -77,7 +78,7 @@ function makeButton(buttonType, parentDiv) {
         buttonDiv.attr("class", "col-lg-6 px-0");
     }
     var button = $("<button>");
-    button.attr("class", "btn bg-white d-block mx-auto p-0 action-button");
+    button.attr("class", "btn bg-cardinal text-white d-block mx-auto p-0 action-button");
     button.attr("data-buttonType", buttonType);
     
     switch(buttonType) {
@@ -131,11 +132,30 @@ function loadData() {  //fetch data from local storage and display in appropriat
     }
 }
 
+function colorRows() {
+    var currentHour = parseInt(moment().format("H"));  //0-23
+    var rowHour;
+    for(var i = 0; i < hourStrings.length; i++){
+        var textDiv = $("#rowNum" + i);
+        rowHour = parseInt(hourStrings[i]);
+        if(rowHour < currentHour){  //past
+            textDiv.attr("class", "col-8 text-entry bg-past p-0 m-0");
+        }
+        else if (rowHour === currentHour){  //present
+            textDiv.attr("class", "col-8 text-entry text-white bg-present p-0 m-0");
+        }
+        else {  //future
+            textDiv.attr("class", "col-8 text-entry bg-future p-0 m-0");
+        }
+    }
+}
+
 function initializePage() {
     
     loadTime();
     buildSkeleton();
     loadData();
+    colorRows();
 }
 
 function handleAddButton(buttonRow) {
