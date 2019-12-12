@@ -44,12 +44,10 @@ function buildSkeleton() {
 
         var textAreaDiv = $("<div>");
         textAreaDiv.attr("class", "col-8 text-entry p-0 m-0");
-        // var textArea = $("<textarea>");
-        // textArea.attr("class", "w-100 h-100 px-2 no-resize d-none");
-        // textAreaDiv.append(textArea);
+        textAreaDiv.attr("id", "rowNum" + i);
+        textAreaDiv.attr("data-index", i);
         var textDisplay = $("<div>");
         textDisplay.attr("class", "px-2");
-        textDisplay.attr("data-index", i);
         textAreaDiv.append(textDisplay);
         timeRow.append(textAreaDiv);
 
@@ -119,10 +117,10 @@ function loadData() {  //fetch data from local storage and display in appropriat
     var data;
 
     for(var i = 0; i < hourStrings.length; i++){
-        console.log("iterating..." + i);
         data = localStorage.getItem(i);
         if (data !== null){
-            $("#rowNum" + i).text(data);
+            var textDiv = $("#rowNum" + i);
+            $(textDiv.children()[0]).text(data);
         }
     }
 }
@@ -161,6 +159,35 @@ function handleDeleteButton(buttonRow) {
 
 function handleSaveButton(buttonRow) {
     console.log("save button clicked");
+    //grab user's input text
+    var textDiv = buttonRow.parent().prev();
+    textAreaEl = $(textDiv.children()[0]);
+    var inputStr = textAreaEl.val();
+    //save it to localStorage
+    var elIndex = textDiv.attr("data-index");
+    localStorage.setItem(elIndex, inputStr);
+    //delete textarea element
+    textDiv.empty();
+    //add text div element
+    var textDisplay = $("<div>");
+    textDisplay.attr("class", "px-2");
+    //populate it with saved text
+    var savedText = localStorage.getItem(elIndex);
+    textDisplay.text(savedText);
+
+    textDiv.append(textDisplay);
+
+    //delete buttons
+    buttonRow.empty();
+
+    //build buttons (could be add)
+    if (savedText === ""){
+        makeButton("add", buttonRow);
+    }
+    else {
+        makeButton("edit", buttonRow);
+        makeButton("delete", buttonRow);
+    }
 }
 
 function handleCancelButton(buttonRow) {
@@ -219,6 +246,5 @@ $(document).on("click", ".buttons-row", function(event){
             console.log("ERROR: Unexpected button type");
     }
 });
-
 
 });
