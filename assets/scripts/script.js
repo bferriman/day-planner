@@ -42,14 +42,14 @@ function buildSkeleton() {
         hourDiv.text(hourStrings[i]);
         timeRow.append(hourDiv);
 
-        var textAreaDiv = $("<div>");
-        textAreaDiv.attr("class", "col-8 text-entry p-0 m-0");
-        textAreaDiv.attr("id", "rowNum" + i);
-        textAreaDiv.attr("data-index", i);
-        var textDisplay = $("<div>");
-        textDisplay.attr("class", "px-2");
-        textAreaDiv.append(textDisplay);
-        timeRow.append(textAreaDiv);
+        var textDiv = $("<div>");
+        textDiv.attr("class", "col-8 text-entry p-0 m-0");
+        textDiv.attr("id", "rowNum" + i);
+        textDiv.attr("data-index", i);
+        var textDisplayDiv = $("<div>");
+        textDisplayDiv.attr("class", "px-2");
+        textDiv.append(textDisplayDiv);
+        timeRow.append(textDiv);
 
         var buttonsColDiv = $("<div>");
         buttonsColDiv.attr("class", "col-2 bg-info round-right")
@@ -67,7 +67,7 @@ function buildSkeleton() {
     }
 }
 
-function makeButton(buttonType, parentDiv) {  //not currently in use - just saving code
+function makeButton(buttonType, parentDiv) {
    
     var buttonDiv = $("<div>");
     if(buttonType === "add"){
@@ -118,9 +118,15 @@ function loadData() {  //fetch data from local storage and display in appropriat
 
     for(var i = 0; i < hourStrings.length; i++){
         data = localStorage.getItem(i);
-        if (data !== null){
+        if (data !== null && data !== ""){
+            //load the data into the text display element   
             var textDiv = $("#rowNum" + i);
             $(textDiv.children()[0]).text(data);
+            //replace add button with edit & delete buttons
+            var buttonRow = $(textDiv.next().children()[0]);
+            buttonRow.empty();
+            makeButton("edit", buttonRow);
+            makeButton("delete", buttonRow);
         }
     }
 }
@@ -147,15 +153,43 @@ function handleAddButton(buttonRow) {
     //build save and cancel buttons
     makeButton("save", buttonRow);
     makeButton("cancel", buttonRow);
-}
+}  //end add button
 
 function handleEditButton(buttonRow) {
     console.log("edit button clicked");
-}
+    //delete text display element
+    var textDiv = buttonRow.parent().prev();
+    textDiv.empty();
+    //build text area element
+    var textArea = $("<textarea>");
+    textArea.attr("class", "w-100 h-100 px-2 no-resize");
+    //populate it with data in localStorage
+    var elIndex = textDiv.attr("data-index");
+    var savedText = localStorage.getItem(elIndex);
+    textArea.text(savedText);
+
+    textDiv.append(textArea);
+    //delete buttons
+    buttonRow.empty();
+    //build buttons
+    makeButton("save", buttonRow);
+    makeButton("cancel", buttonRow);
+}  //end edit button
 
 function handleDeleteButton(buttonRow) {
     console.log("delete button clicked");
-}
+    //empty text content of text display div
+    var textDiv = buttonRow.parent().prev();
+    var textDisplayDiv = $(textDiv.children()[0]);
+    textDisplayDiv.empty();
+    //replace localStorage data with empty string
+    var elIndex = textDiv.attr("data-index");
+    localStorage.setItem(elIndex, "");
+    //delete buttons
+    buttonRow.empty();
+    //build add button
+    makeButton("add", buttonRow);
+}  //end delete button
 
 function handleSaveButton(buttonRow) {
     console.log("save button clicked");
@@ -180,19 +214,43 @@ function handleSaveButton(buttonRow) {
     //delete buttons
     buttonRow.empty();
 
-    //build buttons (could be add)
-    if (savedText === ""){
+    //build buttons
+    if (savedText === "" || savedText === null){
         makeButton("add", buttonRow);
     }
     else {
         makeButton("edit", buttonRow);
         makeButton("delete", buttonRow);
     }
-}
+}  //end save button
 
 function handleCancelButton(buttonRow) {
     console.log("cancel button clicked");
-}
+    //empty the main div
+    var textDiv = buttonRow.parent().prev();
+    textDiv.empty();
+    //build a text display div
+    var textDisplay = $("<div>");
+    textDisplay.attr("class", "px-2");
+    //populate it with saved text
+    var elIndex = textDiv.attr("data-index");
+    var savedText = localStorage.getItem(elIndex);
+    textDisplay.text(savedText);
+
+    textDiv.append(textDisplay);
+
+    //delete buttons
+    buttonRow.empty();
+
+    //build buttons
+    if (savedText === "" || savedText === null){
+        makeButton("add", buttonRow);
+    }
+    else {
+        makeButton("edit", buttonRow);
+        makeButton("delete", buttonRow);
+    }
+}  //end cancel button
 
 
 
